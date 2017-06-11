@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">BrickBreaker Online</string>
+
+    <string name="dummy_button">Cool Button</string>
+    <string name="dummy_content">I\'M SO\nCOOL :)</string>
+    <string name="title_activity_game">Game</string>
+    <string name="switch_screen">Switch screen!</string>
+</resources>
