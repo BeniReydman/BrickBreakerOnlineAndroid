@@ -3,11 +3,11 @@ package net.brickbreakeronline.brickbreakeronline;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import net.brickbreakeronline.brickbreakeronline.framework.GameManager;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,75 +20,81 @@ import java.util.TimerTask;
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
     SurfaceHolder holder;
-    private Timer timer = new Timer();
+    private Timer timer;
 
+    private long lastUpdate;
+    Canvas canvas = null;
+    GameManager gm;
 
-    private boolean isRunning;
-
-    private double frameTime;
 
     public GameSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         holder = getHolder();
         holder.addCallback(this);
+        lastUpdate = System.currentTimeMillis();
+        gm = new GameManager(this);
     }
 
     @Override
-    public void run () {
+    public void run() {
+
+
+        // networkupdate
         timer.schedule(new TimerTask() {
             public void run() {
-                float x = getWidth();
-                Canvas canvas = null;
-                long startTime = SystemClock.uptimeMillis();
-                while (isRunning) {
-                    // UPDATE TIME
-                    long currentTime = SystemClock.uptimeMillis();
-                    frameTime = (currentTime - startTime);
-                    startTime = currentTime;
-                    
-                    //UPDATE
+                gm.networkUpdate();
 
-                    //CheckCollision();
-                    //CheckBallBounds();
-                    //AdjustBatts();
-                    //AdvanceBall();
-
-                    // RENDER STUFF
-                    try {
-                        if (!holder.getSurface().isValid())
-                            continue;
-                        canvas = holder.lockCanvas(null);
-                        synchronized (holder) {
-                            Paint paint = new Paint();
-                            paint.setStyle(Paint.Style.FILL);
-                            paint.setColor(Color.BLUE);
-                            canvas.drawARGB(0, 0, 0, 0);
-                            canvas.drawCircle(x, getHeight() / 2, 100, paint);
-                            x++;
-                            //Draw(canvas);
-                        }
-                    } finally {
-                        if (canvas != null) {
-                            holder.unlockCanvasAndPost(canvas);
-                        }
-                    }
-                    //isRunning = false; //FOR DEBUGGING PURPOSES
-                }
             }
-        }, 0, 60 * 1000);
+        }, 0, 1000/20);
+
+        // update
+        timer.schedule(new TimerTask() {
+               public void run() {
+                    gm.update((System.currentTimeMillis() - lastUpdate) / 1000.0);
+
+               }
+           }, 0, 1000/60);
+
+        // draw
+        timer.schedule(new TimerTask() {
+            public void run() {
+                //UPDATE
+
+                //CheckCollision();
+                //CheckBallBounds();
+                //AdjustBatts();
+                //AdvanceBall();
+
+                // RENDER STUFF
+                if (holder.getSurface().isValid()) {
+                    canvas = holder.lockCanvas(null);
+
+                    if (canvas == null) {
+                        return;
+                    }
+
+                    canvas.drawColor (Color.BLACK);
+
+                    gm.draw(canvas);
+
+                    holder.unlockCanvasAndPost(canvas);
+                }
+
+            }
+        }, 0, 1000 / 60);
+
+
     }
 
 
-    public void pause()
-    {
-        isRunning = false;
+    public void pause() {
         timer.cancel();
     }
 
-    public void resume()
-    {
-        isRunning = true;
+    public void resume() {
+        timer = new Timer();
         run();
+
     }
 
     @Override
@@ -98,13 +104,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        isRunning = true;
+        timer = new Timer();
         run();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        isRunning = false;
     }
 
 }
