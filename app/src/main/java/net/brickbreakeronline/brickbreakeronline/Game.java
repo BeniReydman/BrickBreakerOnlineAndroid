@@ -2,19 +2,57 @@ package net.brickbreakeronline.brickbreakeronline;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 public class Game extends AppCompatActivity {
+
     private static final int UI_ANIMATION_DELAY = 300;
+
     private final Handler mHideHandler = new Handler();
-    private View mContentView;
+
     private Button mNewGameButton;
+
+    private View mContentView;
+    private View mControlsView;
+
+    private double frameTime;
+
+    private boolean isRunning;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_game);
+        mControlsView = findViewById(R.id.fullscreen_content_controls);
+        mContentView = findViewById(R.id.fullscreen_content);
+        mNewGameButton = (Button) findViewById(R.id.switch_screen);
+        mNewGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), MainMenu.class);
+                startActivity(intent);
+            }
+        });
+        isRunning = true;
+        //run();
+    }
+
+    /*******************************************************************************/
+    /* IGNORE, FULLSCREEN SETTINGS */
+    private final Runnable mHideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            hide();
+        }
+    };
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -29,7 +67,6 @@ public class Game extends AppCompatActivity {
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     };
-    private View mControlsView;
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
         public void run() {
@@ -41,50 +78,6 @@ public class Game extends AppCompatActivity {
             mControlsView.setVisibility(View.VISIBLE);
         }
     };
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_game);
-
-        mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.fullscreen_content);
-        mNewGameButton = (Button) findViewById(R.id.switch_screen);
-
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //****** possible on click options for later ******
-            }
-        });
-        mNewGameButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), MainMenu.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        hide();
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        delayedHide(100);
-    }
-
     private void hide() {
         // Hide UI first
         ActionBar actionBar = getSupportActionBar();
@@ -106,4 +99,92 @@ public class Game extends AppCompatActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        delayedHide(100);
+    }
+    /*******************************************************************************/
+
+    public void run()
+    {
+        Canvas canvas = null;
+        long startTime = SystemClock.uptimeMillis();
+
+        while (isRunning)
+        {
+            // UPDATE TIME
+            long currentTime = SystemClock.uptimeMillis();
+            frameTime = (currentTime - startTime);
+            startTime = currentTime;
+
+            //SLEEP
+            if(frameTime < 16)
+            {
+                //sleep(16 - frameTime);
+            }
+
+            //UPDATE
+
+            //CheckCollision();
+            //CheckBallBounds();
+            //AdjustBatts();
+            //AdvanceBall();
+
+            // RENDER STUFF
+            try
+            {
+               // canvas = surfaceHolder.lockCanvas(null);
+                //synchronized (surfaceHolder)
+                {
+                    //Draw(canvas);
+                }
+            }
+            finally
+            {
+                if (canvas != null)
+                {
+                    //surfaceHolder.unlockCanvasAndPost(canvas);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        //GET SURFACE HOLDER
+        /*
+        synchronized (surfaceHolder)
+        {
+            setState(STATE_PAUSE);
+        }
+        */
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        hide();
+        //GET SURFACE HOLDER
+        /*
+        synchronized (surfaceHolder)
+        {
+            setState(STATE_UNPAUSE);
+        }
+        */
+    }
+
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        //POSSIBLE SOUND MANAGER?????
+        //SOUNDMANAGER.cleanup();
+    }
+
+
+
+
 }
