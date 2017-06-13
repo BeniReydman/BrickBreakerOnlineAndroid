@@ -2,38 +2,38 @@ package net.brickbreakeronline.brickbreakeronline;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-public class Game extends AppCompatActivity {
+public class Game extends AppCompatActivity implements View.OnClickListener {
 
     private static final int UI_ANIMATION_DELAY = 300;
 
     private final Handler mHideHandler = new Handler();
+
+    private GameSurfaceView game;
 
     private Button mNewGameButton;
 
     private View mContentView;
     private View mControlsView;
 
-    private double frameTime;
-
-    private boolean isRunning;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        game = (GameSurfaceView) findViewById(R.id.surfaceView1);
+
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
+
         mNewGameButton = (Button) findViewById(R.id.switch_screen);
+
         mNewGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,8 +41,6 @@ public class Game extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        isRunning = true;
-        //run();
     }
 
     /*******************************************************************************/
@@ -106,61 +104,18 @@ public class Game extends AppCompatActivity {
     }
     /*******************************************************************************/
 
-    public void run()
-    {
-        Canvas canvas = null;
-        long startTime = SystemClock.uptimeMillis();
 
-        while (isRunning)
-        {
-            // UPDATE TIME
-            long currentTime = SystemClock.uptimeMillis();
-            frameTime = (currentTime - startTime);
-            startTime = currentTime;
 
-            //SLEEP
-            if(frameTime < 16)
-            {
-                //sleep(16 - frameTime);
-            }
-
-            //UPDATE
-
-            //CheckCollision();
-            //CheckBallBounds();
-            //AdjustBatts();
-            //AdvanceBall();
-
-            // RENDER STUFF
-            try
-            {
-               // canvas = surfaceHolder.lockCanvas(null);
-                //synchronized (surfaceHolder)
-                {
-                    //Draw(canvas);
-                }
-            }
-            finally
-            {
-                if (canvas != null)
-                {
-                    //surfaceHolder.unlockCanvasAndPost(canvas);
-                }
-            }
-        }
+    public void onClick(View v) {
+        Intent intent = new Intent(this, MainMenu.class);
+        startActivity(intent);
     }
 
     @Override
     protected void onPause()
     {
         super.onPause();
-        //GET SURFACE HOLDER
-        /*
-        synchronized (surfaceHolder)
-        {
-            setState(STATE_PAUSE);
-        }
-        */
+        game.pause();
     }
 
     @Override
@@ -168,13 +123,7 @@ public class Game extends AppCompatActivity {
     {
         super.onResume();
         hide();
-        //GET SURFACE HOLDER
-        /*
-        synchronized (surfaceHolder)
-        {
-            setState(STATE_UNPAUSE);
-        }
-        */
+        game.resume();
     }
 
     protected void onDestroy()
@@ -183,6 +132,40 @@ public class Game extends AppCompatActivity {
         //POSSIBLE SOUND MANAGER?????
         //SOUNDMANAGER.cleanup();
     }
+
+    /* TO BE LOOKED OVER LATER
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        float xPosition1 = 0;
+        float yPosition1 = 0;
+        float xPosition2 = 0;
+        float yPosition2 = 0;
+
+        for (int pointerIndex = 0; pointerIndex < event.getPointerCount(); pointerIndex++)
+        {
+            if (pointerIndex == 0)
+            {
+                xPosition1 = event.getX(pointerIndex);
+                yPosition1 = event.getY(pointerIndex);
+            }
+
+            if (pointerIndex == 1)
+            {
+                xPosition2 = event.getX(pointerIndex);
+                yPosition2 = event.getX(pointerIndex);
+            }
+        }
+
+        switch (event.getAction())
+        {
+            case MotionEvent.ACTION_MOVE:
+                //setPaddlePosition(xPosition1, yPosition1, xPosition2, yPosition2);
+                break;
+        }
+        return true;
+    }
+    */
 
 
 

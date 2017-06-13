@@ -1,9 +1,16 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_overlay"
     tools:context="net.brickbreakeronline.brickbreakeronline.Game">
+
+    <net.brickbreakeronline.brickbreakeronline.GameSurfaceView
+        android:id="@+id/surfaceView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </net.brickbreakeronline.brickbreakeronline.GameSurfaceView>
 
     <!-- The primary full-screen view. This can be replaced with whatever view
         is needed to present your content, e.g. VideoView, SurfaceView,
@@ -25,6 +32,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/dummy_button" />
+
+    <Button
+        android:id="@+id/left"
+        style="?metaButtonBarButtonStyle"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:text="left" />
+
+    <Button
+        android:id="@+id/right"
+        style="?metaButtonBarButtonStyle"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="100dp"
+        android:text="right" />
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
