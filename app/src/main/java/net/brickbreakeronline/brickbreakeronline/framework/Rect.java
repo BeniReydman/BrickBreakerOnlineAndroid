@@ -93,6 +93,15 @@ public class Rect {
         return new Vector2(x,y);
     }
 
+    /*public boolean collidesWith(Rect b)
+    {
+        Rect a = this;
+
+        if (a.x > a.x)
+
+
+    }*/
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
