@@ -16,12 +16,35 @@ public class Vector2 {
         this.y = y;
     }
 
+    public Vector2 add(Vector2 v)
+    {
+        return new Vector2(this.x+v.x, this.y+v.y);
+    }
+
+    public Vector2 sub(Vector2 v)
+    {
+        return new Vector2(this.x-v.x, this.y-v.y);
+    }
+
+    public Vector2 multiply(double f)
+    {
+        return new Vector2(this.x*f, this.y*f);
+    }
+
     public double getX() {
         return x;
     }
 
     public double getY() {
         return y;
+    }
+
+    public float getXf() {
+        return (float)x;
+    }
+
+    public float getYf() {
+        return (float)y;
     }
 
     public void setX(double x) {

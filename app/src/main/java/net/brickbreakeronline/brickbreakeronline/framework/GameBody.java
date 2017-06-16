@@ -8,16 +8,18 @@ import android.graphics.Canvas;
 
 public abstract class GameBody {
 
-    Vector2 velocity = Vector2.ZERO;
-    Vector2 position = Vector2.ZERO;
+    public Vector2 velocity;
+    public Vector2 position;
 
-    GameManager gm;
-    int id;
+    protected GameManager gm;
+    protected int id;
 
     public GameBody (GameManager gameManager, int identification)
     {
         gm = gameManager;
         id = identification;
+        velocity = Vector2.ZERO;
+        position = Vector2.ZERO;
     }
 
     public int getID()
@@ -35,8 +37,8 @@ public abstract class GameBody {
 
     }
 
-    public void update() {
-
+    public void update(double delta) {
+        position = position.add(velocity.multiply(delta));
     }
 
     public void destroy() {

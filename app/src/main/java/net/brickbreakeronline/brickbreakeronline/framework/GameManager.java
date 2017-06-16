@@ -62,7 +62,7 @@ public class GameManager {
     public void update(double delta)
     {
         for (GameBody body : bodies) {
-            body.update();
+            body.update(delta);
         }
 
         for (GameBody body : removeQueue) {

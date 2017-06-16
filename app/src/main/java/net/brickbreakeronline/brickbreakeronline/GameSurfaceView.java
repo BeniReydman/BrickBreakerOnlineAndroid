@@ -35,9 +35,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     }
 
-    @Override
-    public void run() {
 
+    protected void createGame() {
         gm = new GameManager(this);
         gm.create();
 
@@ -47,15 +46,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 gm.networkUpdate();
 
             }
-        }, 0, 1000/20);
+        }, 0, 1000 / 20);
 
         // update
         timer.schedule(new TimerTask() {
-               public void run() {
-                    gm.update((System.currentTimeMillis() - lastUpdate) / 1000.0);
+            public void run() {
+                gm.update((System.currentTimeMillis() - lastUpdate) / 1000.0);
+                lastUpdate = System.currentTimeMillis();
 
-               }
-           }, 0, 1000/60);
+            }
+        }, 0, 1000 / 60);
 
         // draw
         timer.schedule(new TimerTask() {
@@ -75,7 +75,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                         return;
                     }
 
-                    canvas.drawColor (Color.BLACK);
+                    canvas.drawColor(Color.BLACK);
 
                     gm.draw(canvas);
 
@@ -84,8 +84,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
             }
         }, 0, 1000 / 60);
+    }
 
+    @Override
+    public void run() {
 
+        timer.schedule(new TimerTask() {
+            public void run() {
+                createGame();
+            }
+        }, 350);
     }
 
 
@@ -96,7 +104,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public void resume() {
         timer = new Timer();
         run();
-
     }
 
     @Override
