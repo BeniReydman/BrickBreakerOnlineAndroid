@@ -32,12 +32,14 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         holder = getHolder();
         holder.addCallback(this);
         lastUpdate = System.currentTimeMillis();
-        gm = new GameManager(this);
+
     }
 
     @Override
     public void run() {
 
+        gm = new GameManager(this);
+        gm.create();
 
         // networkupdate
         timer.schedule(new TimerTask() {

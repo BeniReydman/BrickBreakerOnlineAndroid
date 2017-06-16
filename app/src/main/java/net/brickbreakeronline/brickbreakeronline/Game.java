@@ -104,8 +104,6 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
     }
     /*******************************************************************************/
 
-
-
     public void onClick(View v) {
         Intent intent = new Intent(this, MainMenu.class);
         startActivity(intent);
