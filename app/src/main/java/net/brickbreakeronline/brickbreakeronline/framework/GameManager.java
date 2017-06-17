@@ -2,8 +2,8 @@ package net.brickbreakeronline.brickbreakeronline.framework;
 
 import android.graphics.Canvas;
 
+import net.brickbreakeronline.brickbreakeronline.CreateWorld;
 import net.brickbreakeronline.brickbreakeronline.GameSurfaceView;
-import net.brickbreakeronline.brickbreakeronline.objects.Ball;
 
 import java.util.ArrayList;
 
@@ -47,7 +47,7 @@ public class GameManager {
 
     public void create()
     {
-        bodies.add( new Ball(this, 1) );
+        CreateWorld.createSinglePlayer(this);
     }
 
     public int getWidth()
@@ -65,6 +65,15 @@ public class GameManager {
             body.update(delta);
         }
 
+        ArrayList<GameBody> bodiesWithShape = getBodiesWithShapes();
+        for (GameBody a : bodiesWithShape) {
+            for (GameBody b : bodiesWithShape) {
+                if (a != b && a.getShape().collidesWith(b.getShape())) {
+                    a.onCollide(b);
+                }
+            }
+        }
+
         for (GameBody body : removeQueue) {
             body.destroy();
             bodies.remove(body);
@@ -73,12 +82,22 @@ public class GameManager {
         for (GameBody body : addQueue) {
             bodies.add(body);
         }
+    }
 
-
+    public ArrayList<GameBody> getBodiesWithShapes()
+    {
+        ArrayList<GameBody> bodiesWithShape = new ArrayList<>();
+        for (GameBody body : bodies) {
+            if (body.getShape() != null) {
+                bodiesWithShape.add(body);
+            }
+        }
+        return bodiesWithShape;
     }
 
     public void draw(Canvas canvas)
     {
+        canvas.drawARGB(0, 0, 0, 0);
         for (GameBody body : bodies) {
             body.draw(canvas);
         }

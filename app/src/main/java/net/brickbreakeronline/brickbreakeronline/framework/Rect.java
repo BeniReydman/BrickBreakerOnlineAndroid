@@ -8,15 +8,15 @@ public class Rect {
 
     public static final Rect ZERO = new Rect(0,0,0,0);
 
-    double x;
-    double y;
-    double width;
-    double height;
+    private double x;
+    private double y;
+    private double width;
+    private double height;
 
     public Rect(double x, double y, double width, double height) {
         this.x = x;
         this.y = y;
-        this.width = width;
+        this.width  = width;
         this.height = height;
     }
 

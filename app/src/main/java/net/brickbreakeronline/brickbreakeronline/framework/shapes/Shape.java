@@ -1,6 +1,5 @@
 package net.brickbreakeronline.brickbreakeronline.framework.shapes;
 
-import net.brickbreakeronline.brickbreakeronline.framework.Rect;
 import net.brickbreakeronline.brickbreakeronline.framework.Vector2;
 
 /**
@@ -8,7 +7,6 @@ import net.brickbreakeronline.brickbreakeronline.framework.Vector2;
  */
 
 public abstract class Shape {
-    public static final ShapeRect EMPTY_RECT = new ShapeRect(Rect.ZERO);
 
     public Vector2 position = Vector2.ZERO;
 

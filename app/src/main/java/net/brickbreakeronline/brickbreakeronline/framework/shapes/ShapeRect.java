@@ -9,7 +9,7 @@ import net.brickbreakeronline.brickbreakeronline.framework.Vector2;
 
 public class ShapeRect extends Shape {
 
-    public Vector2 size = Vector2.ZERO;
+    private Vector2 size;
 
     public ShapeRect(Vector2 position, Vector2 size) {
         super(position);
@@ -17,6 +17,11 @@ public class ShapeRect extends Shape {
         this.size = size;
     }
 
+
+    public Vector2 getCenterPosition()
+    {
+        return getPosition().add(getSize().multiply(0.5));
+    }
 
     public ShapeRect(Rect rect) {
         super(rect.getPosition());
@@ -43,20 +48,6 @@ public class ShapeRect extends Shape {
 
     @Override
     public boolean collidesWith(ShapeCircle circle) {
-
-        Vector2 circleDistance = Vector2.ZERO;
-        circleDistance.setX(Math.abs(circle.position.getX() - this.getPosition().getX()));
-        circleDistance.setY(Math.abs(circle.position.getY() - this.getPosition().getY()));
-
-        if (circleDistance.getX() > (this.getWidth()/2 + circle.radius)) { return false; }
-        if (circleDistance.getY() > (this.getHeight()/2 + circle.radius)) { return false; }
-
-        if (circleDistance.getX() <= (this.getWidth()/2)) { return true; }
-        if (circleDistance.getY() <= (this.getHeight()/2)) { return true; }
-
-        double cornerDistance_sq = Math.pow(circleDistance.getX() - this.getWidth()/2,2) +
-                Math.pow(circleDistance.getY() - this.getHeight()/2,2);
-
-        return (cornerDistance_sq <= (Math.pow( circle.radius, 2) ));
+        return circle.collidesWith(this);
     }
 }

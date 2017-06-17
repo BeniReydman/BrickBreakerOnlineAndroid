@@ -3,6 +3,7 @@ package net.brickbreakeronline.brickbreakeronline.framework;
 import android.graphics.Canvas;
 
 import net.brickbreakeronline.brickbreakeronline.framework.shapes.Shape;
+import net.brickbreakeronline.brickbreakeronline.framework.shapes.ShapePoint;
 
 /**
  * Created by Beni on 2017-06-15.
@@ -11,7 +12,7 @@ import net.brickbreakeronline.brickbreakeronline.framework.shapes.Shape;
 public abstract class GameBody {
 
     public Vector2 velocity;
-    public Shape shape;
+    protected Shape shape;
 
     protected GameManager gm;
     protected int id;
@@ -20,8 +21,21 @@ public abstract class GameBody {
     {
         gm = gameManager;
         id = identification;
-        velocity = Vector2.ZERO;
-        shape = null;
+        velocity = new Vector2(0,0);
+        shape = new ShapePoint(new Vector2(0,0));
+    }
+
+    public Shape getShape() {
+        return shape;
+    }
+
+    public void setShape(Shape shape) {
+        shape.setPosition(this.shape.getPosition());
+        this.shape = shape;
+    }
+
+    public void setShapeWithoutPosition(Shape shape) {
+        this.shape = shape;
     }
 
     public int getID()
@@ -59,6 +73,5 @@ public abstract class GameBody {
 
     public void onCollide(GameBody body)
     {
-
     }
 }

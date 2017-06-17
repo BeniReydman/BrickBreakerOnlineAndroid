@@ -12,15 +12,16 @@ public class ShapeCircle extends Shape {
 
     public double radius = 0; // not negative.
 
-    public ShapeCircle(Vector2 position) {
+    public ShapeCircle(Vector2 position, double radius) {
         super(position);
+        this.radius = radius;
     }
 
     @Override
     public boolean collidesWith(ShapeRect s) {
         Vector2 circleDistance = Vector2.ZERO;
-        circleDistance.setX(Math.abs(position.getX() - s.getPosition().getX()));
-        circleDistance.setY(Math.abs(position.getY() - s.getPosition().getY()));
+        circleDistance.setX(Math.abs(position.getX() - s.getCenterPosition().getX()));
+        circleDistance.setY(Math.abs(position.getY() - s.getCenterPosition().getY()));
 
         if (circleDistance.getX() > (s.getWidth()/2 + this.radius)) { return false; }
         if (circleDistance.getY() > (s.getHeight()/2 + this.radius)) { return false; }
