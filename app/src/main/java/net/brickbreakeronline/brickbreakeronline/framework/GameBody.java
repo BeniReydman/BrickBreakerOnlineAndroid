@@ -11,6 +11,14 @@ import net.brickbreakeronline.brickbreakeronline.framework.shapes.ShapePoint;
 
 public abstract class GameBody {
 
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(Vector2 velocity) {
+        this.velocity = velocity;
+    }
+
     public Vector2 velocity;
     protected Shape shape;
 
@@ -63,8 +71,14 @@ public abstract class GameBody {
         return shape.position;
     }
 
+    public Vector2 getDrawPosition()
+    {
+        return gm.gameToScreenCoords(shape.position);
+    }
+
     public void update(double delta) {
-        setPosition(getPosition().add(velocity.multiply(delta)));
+        setPosition(getPosition().add(getVelocity().multiply(delta)));
+
     }
 
     public void destroy() {

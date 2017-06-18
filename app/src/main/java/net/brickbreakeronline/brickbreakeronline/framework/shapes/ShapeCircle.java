@@ -1,5 +1,7 @@
 package net.brickbreakeronline.brickbreakeronline.framework.shapes;
 
+import android.util.Log;
+
 import net.brickbreakeronline.brickbreakeronline.framework.Vector2;
 
 /**
@@ -19,7 +21,7 @@ public class ShapeCircle extends Shape {
 
     @Override
     public boolean collidesWith(ShapeRect s) {
-        Vector2 circleDistance = Vector2.ZERO;
+        Vector2 circleDistance = new Vector2(0,0);
         circleDistance.setX(Math.abs(position.getX() - s.getCenterPosition().getX()));
         circleDistance.setY(Math.abs(position.getY() - s.getCenterPosition().getY()));
 

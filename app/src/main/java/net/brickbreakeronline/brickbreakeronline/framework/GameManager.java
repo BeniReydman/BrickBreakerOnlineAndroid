@@ -14,16 +14,15 @@ import java.util.ArrayList;
 public class GameManager {
 
     final String id = "";
-    final int width;
-    final int height;
     public final ArrayList<GameBody> bodies;
     public final ArrayList<GameBody> addQueue;
     public final ArrayList<GameBody> removeQueue;
+    public final Vector2 gameSize = new Vector2(900, 1600);
+    public final Vector2 screenSize;
 
     public GameManager(GameSurfaceView view)
     {
-        width = view.getWidth();
-        height = view.getHeight();
+        screenSize  = new Vector2(view.getWidth(), view.getHeight());
         bodies      = new ArrayList<GameBody>();
         addQueue    = new ArrayList<GameBody>();
         removeQueue = new ArrayList<GameBody>();
@@ -32,6 +31,7 @@ public class GameManager {
     public GameBody getGameBodyByID(int id)
     {
         //iterate through game bodies; return game body with ID or null if not found
+        // also iterate through brick holder
         return null;
     }
 
@@ -50,14 +50,14 @@ public class GameManager {
         CreateWorld.createSinglePlayer(this);
     }
 
-    public int getWidth()
+    public int getGameWidth()
     {
-        return width;
+        return (int)gameSize.getX();
     }
 
-    public int getHeight()
+    public int getGameHeight()
     {
-        return height;
+        return (int)gameSize.getY();
     }
     public void update(double delta)
     {
@@ -78,10 +78,12 @@ public class GameManager {
             body.destroy();
             bodies.remove(body);
         }
+        removeQueue.clear();
 
         for (GameBody body : addQueue) {
             bodies.add(body);
         }
+        addQueue.clear();
     }
 
     public ArrayList<GameBody> getBodiesWithShapes()
@@ -109,6 +111,22 @@ public class GameManager {
             body.networkUpdate();
         }
 
+    }
+
+    public Vector2 getScreenRatio()
+    {
+        return new Vector2(
+                (screenSize.x / gameSize.x),
+                (screenSize.y / gameSize.y)
+        );
+    }
+
+    public Vector2 gameToScreenCoords(Vector2 coord)
+    {
+        return new Vector2(
+                coord.x * (screenSize.x / gameSize.x),
+                coord.y * (screenSize.y / gameSize.y)
+        );
     }
 
 }

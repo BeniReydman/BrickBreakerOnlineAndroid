@@ -32,6 +32,10 @@ public class ShapeRect extends Shape {
         return size;
     }
 
+    public void setSize(Vector2 size) {
+        this.size = size;
+    }
+
     public double getWidth() {
         return size.getX();
     }
