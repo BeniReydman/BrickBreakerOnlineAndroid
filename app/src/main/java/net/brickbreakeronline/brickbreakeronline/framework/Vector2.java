@@ -16,6 +16,19 @@ public class Vector2 {
         this.y = y;
     }
 
+    public Vector2(double angle) {
+        x = -Math.cos(angle);
+        y = Math.sin(angle);
+    }
+
+    public Vector2 reverseY() {
+        return new Vector2(x,-y);
+    }
+
+    public Vector2 reverseX() {
+        return new Vector2(-x,y);
+    }
+
     public Vector2 add(Vector2 v)
     {
         return new Vector2(this.x+v.x, this.y+v.y);
@@ -31,12 +44,39 @@ public class Vector2 {
         return new Vector2(this.x*f, this.y*f);
     }
 
+    public Vector2 normalize()
+    {
+        return new Vector2(x/getLength(), y/getLength());
+    }
+
     public double getX() {
         return x;
     }
 
     public double getY() {
         return y;
+    }
+
+    public Vector2 goLeft()
+    {
+        return new Vector2(-Math.abs(x), y);
+    }
+
+
+    public Vector2 goRight()
+    {
+        return new Vector2(Math.abs(x), y);
+    }
+
+
+    public Vector2 goUp()
+    {
+        return new Vector2(x, -Math.abs(y));
+    }
+
+    public Vector2 goDown()
+    {
+        return new Vector2(x, Math.abs(y));
     }
 
     public Vector2 clone()
@@ -58,6 +98,16 @@ public class Vector2 {
 
     public void setY(double y) {
         this.y = y;
+    }
+
+    public static double angle(Vector2 a, Vector2 b)
+    {
+        return Math.asin((a.x*b.x+a.y*b.y)/(a.getLength() * b.getLength()));
+    }
+
+    public double angle()
+    {
+        return angle(this, new Vector2(-1,0));
     }
 
     public double getLength()

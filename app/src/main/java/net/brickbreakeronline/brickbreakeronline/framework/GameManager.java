@@ -61,6 +61,7 @@ public class GameManager {
     }
     public void update(double delta)
     {
+        Touch.update();
         for (GameBody body : bodies) {
             body.update(delta);
         }
@@ -69,7 +70,7 @@ public class GameManager {
         for (GameBody a : bodiesWithShape) {
             for (GameBody b : bodiesWithShape) {
                 if (a != b && a.getShape().collidesWith(b.getShape())) {
-                    a.onCollide(b);
+                    a.onCollide(b, delta);
                 }
             }
         }
@@ -126,6 +127,14 @@ public class GameManager {
         return new Vector2(
                 coord.x * (screenSize.x / gameSize.x),
                 coord.y * (screenSize.y / gameSize.y)
+        );
+    }
+
+    public Vector2 screenToGameCoords(Vector2 coord)
+    {
+        return new Vector2(
+                coord.x * (gameSize.x / screenSize.x),
+                coord.y * (gameSize.y / screenSize.y)
         );
     }
 

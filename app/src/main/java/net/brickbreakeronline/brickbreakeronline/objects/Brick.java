@@ -15,6 +15,12 @@ import net.brickbreakeronline.brickbreakeronline.framework.shapes.ShapeRect;
 
 public class Brick extends GameBody {
 
+    public BrickHolder holder;
+    private float health = 100;
+
+    int[] colorSpectrum = {Color.RED, Color.YELLOW, Color.WHITE};
+    int color = colorSpectrum[colorSpectrum.length-1];
+
     public Brick(GameManager gameManager, int identification, Vector2 size, Vector2 pos) {
         super(gameManager, identification);
         setShapeWithoutPosition(new ShapeRect(pos, size));
@@ -36,14 +42,31 @@ public class Brick extends GameBody {
 
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.WHITE);
+        paint.setColor(color);
         //Log.d("SIZE", String.valueOf(getSize().getXf()) + " " + String.valueOf(getSize().getYf())  );
         canvas.drawRect(
-                getPosition().getXf(),
-                getPosition().getYf(),
-                getPosition().getXf() + getSize().getXf(),
-                getPosition().getYf() + getSize().getYf(),
+                getDrawPosition().getXf(),
+                getDrawPosition().getYf(),
+                getDrawPosition().getXf() + gm.gameToScreenCoords(getSize()).getXf(),
+                getDrawPosition().getYf() + gm.gameToScreenCoords(getSize()).getYf(),
                 paint);
 
+    }
+
+    public void doDamage(float damage)
+    {
+        health -= damage;
+        checkColor();
+        if (health <= 0) {
+            gm.removeBody(this);
+            if (holder != null) {
+                holder.removeBrick(this);
+            }
+        }
+    }
+
+    private void checkColor()
+    {
+        color = colorSpectrum[(int)(health/100 * (colorSpectrum.length-1))];
     }
 }

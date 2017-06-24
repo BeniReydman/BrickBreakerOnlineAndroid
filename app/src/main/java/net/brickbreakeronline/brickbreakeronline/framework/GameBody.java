@@ -53,6 +53,7 @@ public abstract class GameBody {
 
     public void draw(Canvas canvas)
     {
+
     }
 
 
@@ -81,11 +82,13 @@ public abstract class GameBody {
 
     }
 
-    public void destroy() {
+    public void destroy()
+    {
 
     }
 
-    public void onCollide(GameBody body)
+    public void onCollide(GameBody body, double delta)
     {
+
     }
 }
