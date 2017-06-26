@@ -61,10 +61,7 @@ public class GameManager {
     }
     public void update(double delta)
     {
-        Touch.update();
-        for (GameBody body : bodies) {
-            body.update(delta);
-        }
+
 
         ArrayList<GameBody> bodiesWithShape = getBodiesWithShapes();
         for (GameBody a : bodiesWithShape) {
@@ -73,6 +70,11 @@ public class GameManager {
                     a.onCollide(b, delta);
                 }
             }
+        }
+
+        Touch.update();
+        for (GameBody body : bodies) {
+            body.update(delta);
         }
 
         for (GameBody body : removeQueue) {

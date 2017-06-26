@@ -17,6 +17,7 @@ import net.brickbreakeronline.brickbreakeronline.framework.shapes.ShapeRect;
 public class Ball extends GameBody {
 
     //double mHeight;
+    public Vector2 desiredVelocity;
     double speed = 0.25;
     double angleAddtion = 45*Math.PI/180;
     double angleMax = Math.PI*3/24;
@@ -34,6 +35,11 @@ public class Ball extends GameBody {
 
     @Override
     public void update(double delta) {
+        if(desiredVelocity != null)
+        {
+            setVelocity(desiredVelocity);
+            desiredVelocity = null;
+        }
         super.update(delta);
 
         if (getPosition().getX() + ((ShapeCircle)shape).radius >= gm.getGameWidth()) {
@@ -112,30 +118,30 @@ public class Ball extends GameBody {
             if(ballVelX >= 0 && ballVelY >= 0) // Ball is going Bottom Right
             {
                 if (top - centerY > left - centerX) // Ball hit Top
-                    setVelocity(velocity.goUp());
+                    desiredVelocity = velocity.goUp();
                 else // Ball hit Left
-                    setVelocity(velocity.goLeft());
+                    desiredVelocity = velocity.goLeft();
             }
             else if (ballVelX < 0 && ballVelY >=0) // Ball is going Bottom Left
             {
                 if (top - centerY > centerX - right) // Ball hit Top
-                    setVelocity(velocity.goUp());
+                    desiredVelocity = velocity.goUp();
                 else // Ball hit Right
-                    setVelocity(velocity.goRight());
+                    desiredVelocity = velocity.goRight();
             }
             else if (ballVelX >= 0 && ballVelY < 0) // Ball is going Top Right
             {
                 if (centerY - bottom > left - centerX) // Ball hit Bottom
-                    setVelocity(velocity.goDown());
+                    desiredVelocity = velocity.goDown();
                 else // Ball hit Left
-                    setVelocity(velocity.goLeft());
+                    desiredVelocity = velocity.goLeft();
             }
             else // Ball is going Top Left
             {
                 if (centerY - bottom > centerX - right) // Ball hit Bottom
-                    setVelocity(velocity.goDown());
+                    desiredVelocity = velocity.goDown();
                 else // Ball hit Right
-                    setVelocity(velocity.goRight());
+                    desiredVelocity = velocity.goRight();
             }
         }
 
@@ -150,7 +156,7 @@ public class Ball extends GameBody {
             double width = paddleShape.getSize().getX();
             double centerPercentage = diff / width * 2;
 
-            double angle = velocity.angle() - Math.PI/2 + centerPercentage * angleAddtion;
+            double angle = desiredVelocity.angle() - Math.PI/2 + centerPercentage * angleAddtion;
             if (center.getY() < paddleCenter.getY()) { // top
                 angle = angle > -Math.PI*1/2 + angleMax ? -Math.PI*1/2 + angleMax : angle;
                 angle = angle < -Math.PI*1/2 - angleMax ? -Math.PI*1/2 - angleMax : angle;
@@ -159,7 +165,7 @@ public class Ball extends GameBody {
                 angle = angle < Math.PI*1/2 - angleMax ? Math.PI*1/2 - angleMax : angle;
             }
 
-            setVelocity((new Vector2(angle)).multiply(speed));
+            desiredVelocity = (new Vector2(angle)).multiply(speed);
         }
     }
 }

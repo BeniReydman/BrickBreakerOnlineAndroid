@@ -11,13 +11,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="5"
-        android:src="@drawable/logo" />
+        android:src="@color/black_overlay" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="3"
-        android:background="@drawable/splash"
+        android:background="@color/colorPrimaryDark"
         android:orientation="vertical">
 
         <View
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/mainmenubutton" />
+                android:background="@drawable/playbuttonxml" />
 
             <ImageButton
                 android:id="@+id/switch_screen2"
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/mainmenubutton" />
+                android:background="@drawable/settingsbuttonxml" />
 
         </LinearLayout>
 

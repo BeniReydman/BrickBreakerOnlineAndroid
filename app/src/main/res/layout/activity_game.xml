@@ -29,8 +29,8 @@
     <Button
         android:id="@+id/switch_screen"
         style="?metaButtonBarButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
         android:text="@string/dummy_button" />
 
 

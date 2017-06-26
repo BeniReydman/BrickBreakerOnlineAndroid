@@ -6,6 +6,6 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="net.brickbreakeronline.brickbreakeronline.MainMenu"
-    tools:showIn="@layout/activity_game2">
+    tools:showIn="@layout/activity_mainmenu">
 
 </android.support.constraint.ConstraintLayout>
