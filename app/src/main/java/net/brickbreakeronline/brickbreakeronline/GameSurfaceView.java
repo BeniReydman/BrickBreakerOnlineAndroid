@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
 import net.brickbreakeronline.brickbreakeronline.framework.GameManager;
 import net.brickbreakeronline.brickbreakeronline.framework.Touch;
@@ -23,6 +24,8 @@ import java.util.TimerTask;
 
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
+    Game g;
+    TextView t;
     SurfaceHolder holder;
     private Thread thread;
     private boolean looping = false;
@@ -34,13 +37,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private int UPS = 40;
     private int FPS = 30;
     private int NPS = 20;
+    private int readyInt = 0;
 
     private long lastRealUPSUpdate = System.currentTimeMillis();
     private int updatesDone = 0;
     private int framesDone = 0;
 
     Canvas canvas = null;
+    Timer preGameTimer;
     Timer waitTimer;
+    Timer gameStart;
     GameManager gm;
 
 
@@ -50,6 +56,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         holder.addCallback(this);
         thread = new Thread(this);
         waitTimer = new Timer();
+        preGameTimer = new Timer();
+        gameStart = new Timer();
+
 
     }
 
@@ -71,14 +80,35 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     }
 
     protected void createGame() {
+
+        g.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                t = GameSurfaceView.super.getRootView().findViewById(R.id.fullscreen_content);
+            }
+        });
         waitTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 createGameManager();
-                startLoop();
-
+                drawGame();
+                readyDraw();
             }
         }, 350);
+        gameStart.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                g.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        t.setText("");
+                    }
+                });
+                lastUpdate = System.currentTimeMillis();
+                lastNetworkUpdate = System.currentTimeMillis();
+                startLoop();
+            }
+        }, 3000);
     }
 
 
@@ -119,6 +149,40 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 return true;
         }
         return false;
+    }
+
+    public void readyDraw()
+    {
+        g.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(readyInt == 0)
+                {
+                    t.setText("Ready?");
+                    readyInt++;
+                }
+                else
+                if(readyInt == 1)
+                {
+                    t.setText("Get Set!");
+                    readyInt++;
+                }
+                else
+                if(readyInt == 2)
+                {
+                    t.setText("Go!");
+                    readyInt++;
+                }
+            }
+        });
+
+        preGameTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(readyInt < 3)
+                readyDraw();
+            }
+            }, 1000);
     }
 
     @Override

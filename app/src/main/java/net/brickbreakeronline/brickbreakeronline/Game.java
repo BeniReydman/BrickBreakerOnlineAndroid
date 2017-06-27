@@ -28,6 +28,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         game = (GameSurfaceView) findViewById(R.id.surfaceView1);
+        game.g = this;
 
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
