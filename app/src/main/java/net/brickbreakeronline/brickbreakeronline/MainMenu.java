@@ -12,7 +12,6 @@ public class MainMenu extends AppCompatActivity {
     public static final String host = "192.168.0.182";
     public static final int port = 3250;
 
-    private SessionHolder s;
 
     private ImageButton mNewGameButton;
 
@@ -30,7 +29,6 @@ public class MainMenu extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        s = new SessionHolder(host ,port);
     }
 
 }

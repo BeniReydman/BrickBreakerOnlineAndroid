@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import net.brickbreakeronline.brickbreakeronline.Effects.Explosion;
 import net.brickbreakeronline.brickbreakeronline.framework.GameBody;
 import net.brickbreakeronline.brickbreakeronline.framework.GameManager;
 import net.brickbreakeronline.brickbreakeronline.framework.Vector2;
@@ -15,6 +16,7 @@ import net.brickbreakeronline.brickbreakeronline.framework.shapes.ShapeRect;
 
 public class Brick extends GameBody {
 
+    private GameBody tempGB;
     public BrickHolder holder;
     private float health = 100;
 
@@ -64,7 +66,11 @@ public class Brick extends GameBody {
         health -= damage;
         checkColor();
         if (health <= 0) {
+            tempGB = (new Explosion(gm, -1, this.getPosition()));
+            gm.addBody(tempGB);
+            ((Explosion)tempGB).explodeRandom();
             gm.removeBody(this);
+
             if (holder != null) {
                 holder.removeBrick(this);
             }
