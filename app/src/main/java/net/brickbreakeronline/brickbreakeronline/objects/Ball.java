@@ -156,7 +156,9 @@ public class Ball extends GameBody {
             double width = paddleShape.getSize().getX();
             double centerPercentage = diff / width * 2;
 
+
             double angle = desiredVelocity.angle() - Math.PI/2 + centerPercentage * angleAddtion;
+
             if (center.getY() < paddleCenter.getY()) { // top
                 angle = angle > -Math.PI*1/2 + angleMax ? -Math.PI*1/2 + angleMax : angle;
                 angle = angle < -Math.PI*1/2 - angleMax ? -Math.PI*1/2 - angleMax : angle;
@@ -164,7 +166,6 @@ public class Ball extends GameBody {
                 angle = angle > Math.PI*1/2 + angleMax ? Math.PI*1/2 + angleMax : angle;
                 angle = angle < Math.PI*1/2 - angleMax ? Math.PI*1/2 - angleMax : angle;
             }
-
             desiredVelocity = (new Vector2(angle)).multiply(speed);
         }
     }

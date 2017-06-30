@@ -30,6 +30,8 @@ public class Paddle extends GameBody {
     public void update(double delta) {
         super.update(delta);
 
+
+
         if (Touch.isTouch()) {
             double desiredPos = gm.screenToGameCoords(Touch.touchCoords).getX();
             double currentPos = ((ShapeRect)shape).getCenterPosition().getX();
@@ -90,6 +92,9 @@ public class Paddle extends GameBody {
                 getDrawPosition().getXf() + gm.gameToScreenCoords(getSize()).getXf(),
                 getDrawPosition().getYf() + gm.gameToScreenCoords(getSize()).getYf(),
                 paint);
+
+
+
 
     }
 

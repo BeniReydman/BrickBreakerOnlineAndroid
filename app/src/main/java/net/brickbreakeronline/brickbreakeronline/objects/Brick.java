@@ -37,6 +37,12 @@ public class Brick extends GameBody {
     }
 
     @Override
+    public void destroy() {
+        super.destroy();
+
+    }
+
+    @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
 
