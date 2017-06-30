@@ -42,8 +42,8 @@ public class Explosion extends GameBody{
         for(int x = 0; x < particleAmount; x++)
         {
             color = randomColor();
-            size = (int) (Math.random() * 40);
-            life = (int) Math.random() * (60) + 100;
+            size = (int) (Math.random() * 50);
+            life = (int) (Math.random() * (75)) + 15;
             dx = (int) (Math.random() * 5);
             dy = (int) (Math.random() * 5);
             addParticle();
