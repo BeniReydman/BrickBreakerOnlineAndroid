@@ -157,12 +157,15 @@ public class Ball extends GameBody {
             double centerPercentage = diff / width * 2;
 
 
-            double angle = desiredVelocity.angle() - Math.PI/2 + centerPercentage * angleAddtion;
+            // 0 is left, PI/2 is down, PI is right, 3/2 PI is up
 
+            double angle;
             if (center.getY() < paddleCenter.getY()) { // top
+                angle = desiredVelocity.angle() - Math.PI/2 + centerPercentage * angleAddtion;
                 angle = angle > -Math.PI*1/2 + angleMax ? -Math.PI*1/2 + angleMax : angle;
                 angle = angle < -Math.PI*1/2 - angleMax ? -Math.PI*1/2 - angleMax : angle;
             } else { // bottom
+                angle = desiredVelocity.angle() + Math.PI/2 - centerPercentage * angleAddtion;
                 angle = angle > Math.PI*1/2 + angleMax ? Math.PI*1/2 + angleMax : angle;
                 angle = angle < Math.PI*1/2 - angleMax ? Math.PI*1/2 - angleMax : angle;
             }
