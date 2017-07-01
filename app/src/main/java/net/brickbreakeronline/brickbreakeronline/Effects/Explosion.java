@@ -18,17 +18,19 @@ public class Explosion extends GameBody{
 
     private ArrayList<Particle> particles = new ArrayList<Particle>();
     private int particleAmount;
-    private int dx;
-    private int dy;
+    private double dx;
+    private double dy;
     private int size;
     private int life;
     private int color;
+    Vector2 coords;
     public boolean created = false;
 
-    public Explosion(GameManager gameManager, int identification, Vector2 coords)
+    public Explosion(GameManager gameManager, int identification, Vector2 coords, Vector2 size)
     {
         super(gameManager, identification);
-        this.setPosition(coords);
+        this.coords = new Vector2(coords.getXf() + size.getXf()/2,coords.getYf() + size.getYf()/2);
+        this.setPosition(this.coords);
     }
 
 
@@ -42,10 +44,10 @@ public class Explosion extends GameBody{
         for(int x = 0; x < particleAmount; x++)
         {
             color = randomColor();
-            size = (int) (Math.random() * 50);
+            size = (int) (Math.random() * 30);
             life = (int) (Math.random() * (75)) + 15;
-            dx = (int) (Math.random() * 5);
-            dy = (int) (Math.random() * 5);
+            dx = (Math.random() * 6);
+            dy = (Math.random() * 6);
             addParticle();
         }
     }

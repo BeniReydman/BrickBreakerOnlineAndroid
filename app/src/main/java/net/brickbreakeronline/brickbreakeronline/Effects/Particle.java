@@ -13,10 +13,11 @@ import net.brickbreakeronline.brickbreakeronline.framework.Vector2;
 public class Particle {
 
     private GameManager gm;
-    private int x;
-    private int y;
-    private int dx;
-    private int dy;
+    private int changeDX;
+    private double x;
+    private double y;
+    private double dx;
+    private double dy;
     private int size;
     private int initSize;
     private int life;
@@ -26,12 +27,13 @@ public class Particle {
     Paint paint = new Paint();
 
 
-    public Particle(Vector2 position, int dx, int dy, int size, int life, int c)
+    public Particle(Vector2 position, double dx, double dy, int size, int life, int c)
     {
         this.position = position;
         x = (int)position.getX();
         y = (int)position.getY();
         this.dx = dx;
+        changeDX = 0;
         this.dy = dy;
         this.size = size;
         initSize = size;
@@ -47,6 +49,9 @@ public class Particle {
         x += dx;
         y += dy;
         life--;
+        changeDX++;
+        if(changeDX % 10 == 0)
+            lowerDY();
         if (life <= 0)
             return true;
         return false;
@@ -54,15 +59,15 @@ public class Particle {
 
     public void lowerDY()
     {
-        if(dy > 0)
-            dy--;
-        if(dy < 0)
-            dy++;
+        if(dx > 0)
+            dx--;
+        if(dx < 0)
+            dx++;
     }
 
     public void draw(Canvas canvas)
     {
         size = (int)((life / firstLife) * initSize);
-        canvas.drawRect(x , y, (x + size), (y + size), paint);
+        canvas.drawCircle((float)x , (float)y, size, paint);
     }
 }
