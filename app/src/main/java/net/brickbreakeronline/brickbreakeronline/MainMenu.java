@@ -3,6 +3,7 @@ package net.brickbreakeronline.brickbreakeronline;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -30,6 +31,7 @@ public class MainMenu extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_mainmenu);
 
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
 
 
         mNewGameButton = (ImageButton) findViewById(R.id.switch_screen);
@@ -90,21 +92,21 @@ public class MainMenu extends AppCompatActivity {
     private void storeAccount(Account acc) {
         this.acc = acc;
 
-
-        SharedPreferences prefs = getPreferences(0);
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong("u_id", acc.id);
         editor.putString("key", acc.key);
-        editor.putString("key", acc.name);
-        editor.apply();
+        editor.putString("name", acc.name);
+        editor.commit();
     }
 
     private Account retrieveAccount() {
 
-        SharedPreferences prefs = getPreferences(0);
-        long userID = prefs.getLong("uid", 0); // retrieve user id
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);;
+        long userID = prefs.getLong("u_id", 0); // retrieve user id
         String key = prefs.getString("key", null);
         String name = prefs.getString("name", null);
+
         if (userID == 0) {
             return new Account();
         } else {
@@ -172,8 +174,6 @@ public class MainMenu extends AppCompatActivity {
     private Session.MessageListener onAccountRetrieval = new Session.MessageListener() {
         @Override
         public void call(JsonObject obj) {
-            Log.d("account_info", obj.toString());
-
             try {
 
                 int code = obj.get("code").getAsNumber().intValue();
@@ -186,15 +186,13 @@ public class MainMenu extends AppCompatActivity {
                 acc.id = accObj.get("id").getAsNumber().longValue();
                 acc.name = accObj.get("name").getAsString();
                 storeAccount(acc);
+                Log.d("NAME", acc.name);
 
 
             } catch(NullPointerException e) {
                 Log.d("Retrieval Error", e.getMessage());
             }
 
-
-
-            storeAccount(acc);
             // update settings to current account state here.
         }
     };
