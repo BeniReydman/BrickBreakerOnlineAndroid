@@ -19,10 +19,14 @@ public class Paddle extends GameBody {
     //Vector2 startTouch = new Vector2(0,0);
 
     double maxSpeed = 32;
+    Paint paint;
 
     public Paddle(GameManager gameManager, int identification, Vector2 pos, Vector2 size) {
         super(gameManager, identification);
         setShapeWithoutPosition(new ShapeRect(pos, size));
+
+        paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
     }
 
 
@@ -82,8 +86,6 @@ public class Paddle extends GameBody {
     public void draw(Canvas canvas) {
         super.draw(canvas);
 
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.GREEN);
         //Log.d("SIZE", String.valueOf(getSize().getXf()) + " " + String.valueOf(getSize().getYf())  );
         canvas.drawRect(
@@ -92,10 +94,6 @@ public class Paddle extends GameBody {
                 getDrawPosition().getXf() + gm.gameToScreenCoords(getSize()).getXf(),
                 getDrawPosition().getYf() + gm.gameToScreenCoords(getSize()).getYf(),
                 paint);
-
-
-
-
     }
 
     @Override
