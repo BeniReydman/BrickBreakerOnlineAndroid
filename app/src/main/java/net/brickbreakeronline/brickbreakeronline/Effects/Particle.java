@@ -27,7 +27,7 @@ public class Particle {
     Paint paint = new Paint();
 
 
-    public Particle(Vector2 position, double dx, double dy, int size, int life, int c)
+    public Particle(Vector2 position, double dx, double dy, int size, int life, int color)
     {
         this.position = position;
         x = (int)position.getX();
@@ -39,9 +39,9 @@ public class Particle {
         initSize = size;
         this.life = life;
         firstLife = (double)life;
-        this.color = c;
+        this.color = color;
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(color);
+        paint.setColor(this.color);
     }
 
     public boolean update()
@@ -51,17 +51,17 @@ public class Particle {
         life--;
         changeDX++;
         if(changeDX % 10 == 0)
-            lowerDY();
+            lowerDX();
         if (life <= 0)
             return true;
         return false;
     }
 
-    public void lowerDY()
+    public void lowerDX()
     {
-        if(dx > 0)
+        if(dx > 1)
             dx--;
-        if(dx < 0)
+        if(dx < -1)
             dx++;
     }
 

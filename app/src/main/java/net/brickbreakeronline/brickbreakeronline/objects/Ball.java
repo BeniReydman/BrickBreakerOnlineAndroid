@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import net.brickbreakeronline.brickbreakeronline.Effects.Trail;
 import net.brickbreakeronline.brickbreakeronline.framework.GameBody;
 import net.brickbreakeronline.brickbreakeronline.framework.GameManager;
 import net.brickbreakeronline.brickbreakeronline.framework.Vector2;
@@ -22,6 +23,8 @@ public class Ball extends GameBody {
     double angleAddtion = 45*Math.PI/180;
     double angleMax = Math.PI*3/24;
     float radius = 21;
+    Paint paint;
+    Trail trail;
 
     public Ball(GameManager gm, int identification) {
         super(gm, identification);
@@ -29,6 +32,9 @@ public class Ball extends GameBody {
         setSpeed(speed);
         Vector2 pos = new Vector2(gm.getGameWidth()/2, gm.getGameHeight()/2);
         setShape(new ShapeCircle(pos, radius));
+        paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        trail = new Trail(pos, radius);
         //mHeight = Math.sin(45) * 21.0;
 
     }
@@ -54,7 +60,7 @@ public class Ball extends GameBody {
         if (getPosition().getY() < 0) {
             setVelocity(velocity.goDown());
         }
-
+        trail.update(getDrawPosition().getXf(), getDrawPosition().getYf());
         /*Log.d("velocity", velocity.multiply(delta).toString());
         Log.d("delta", String.valueOf(delta));*/
     }
@@ -62,10 +68,8 @@ public class Ball extends GameBody {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
+        trail.draw(canvas, paint);
         canvas.drawCircle(
                 getDrawPosition().getXf(),
                 getDrawPosition().getYf(),
@@ -96,8 +100,8 @@ public class Ball extends GameBody {
 
             double ballVelX = velocity.getX();
             double ballVelY = velocity.getY();
-            double centerY = center.getY() - (ballVelY * delta);
-            double centerX = center.getX() - (ballVelX * delta);
+            double centerY = center.getY() - (ballVelY * (delta/2));
+            double centerX = center.getX() - (ballVelX * (delta/2));
             double top    = paddleShape.getPosition().getY();
             double right  = paddleShape.getPosition().getX() + paddleShape.getSize().getX();
             double bottom = paddleShape.getPosition().getY() + paddleShape.getSize().getY();
