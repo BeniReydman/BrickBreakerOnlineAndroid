@@ -38,7 +38,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private int UPS = 40;
     private int FPS = 30;
     private int NPS = 20;
-    private int readyInt = 0;
 
     private long lastRealUPSUpdate = System.currentTimeMillis();
     private int updatesDone = 0;
@@ -86,21 +85,25 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         gm.create();
     }
 
+    /**
+     * Starts the game at a specific time alerting the user of when the game will start.
+     * @param time
+     */
+    protected void startGameAt(long time) {
+        int delay = (int) (time - System.currentTimeMillis());
+        resetReadyText(delay/3);
+    }
+
+    protected void startGame() {
+        lastUpdate = System.currentTimeMillis();
+        lastNetworkUpdate = System.currentTimeMillis();
+        startLoop();
+    }
+
+
+
     protected void createSinglePlayerGame() {
-        gameStart.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                g.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        t.setText("");
-                    }
-                });
-                lastUpdate = System.currentTimeMillis();
-                lastNetworkUpdate = System.currentTimeMillis();
-                startLoop();
-            }
-        }, 3000);
+        startGameAt(System.currentTimeMillis() + 3000);
     }
 
     protected void createMultiplayerGame() {}
@@ -119,9 +122,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             public void run() {
                 createGameManager();
                 drawGame();
-                readyDraw();
             }
         }, 350);
+
+        setReadyText("Preparing...");
 
         switch (mode) {
             case GameManager.MODE_SINGLE_PLAYER:
@@ -174,38 +178,53 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         return false;
     }
 
-    public void readyDraw()
-    {
+    private void setReadyText(final int text_r_id) {
         g.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(readyInt == 0)
-                {
-                    t.setText("Ready?");
-                    readyInt++;
-                }
-                else
-                if(readyInt == 1)
-                {
-                    t.setText("Get Set!");
-                    readyInt++;
-                }
-                else
-                if(readyInt == 2)
-                {
-                    t.setText("Go!");
-                    readyInt++;
-                }
+                t.setText(text_r_id);
             }
         });
+    }
+
+    private void setReadyText(final String text) {
+        g.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                t.setText(text);
+            }
+        });
+    }
+
+    public void resetReadyText(int interval) { resetReadyText(interval, 0); }
+    public void resetReadyText(final int interval, final int step)
+    {
+
+        switch (step) {
+            case 0:
+                setReadyText("Get Ready!");
+                break;
+            case 1:
+                setReadyText("Get Set!");
+                break;
+            case 2:
+                setReadyText("GO!");
+                break;
+            case 3:
+                setReadyText("");
+                startGame();
+                return;
+            default:
+                return;
+        }
+
 
         preGameTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(readyInt < 3)
-                readyDraw();
+                resetReadyText(interval, step + 1);
             }
-            }, 1000);
+            }, interval);
     }
 
     @Override

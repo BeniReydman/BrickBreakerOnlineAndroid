@@ -21,21 +21,30 @@ public class GameManager {
     public static final int MODE_SINGLE_PLAYER = 0;
     public static final int MODE_MULTIPLAYER = 1;
 
+    public static final int GAME_STATE_PREP          = 0;
+    public static final int GAME_STATE_READY         = 1;
+    public static final int GAME_STATE_STARTING      = 2;
+    public static final int GAME_STATE_STARTED       = 3;
+    public static final int GAME_STATE_ENDED         = 4;
+
     final String id = "";
     public final ArrayList<GameBody> bodies;
     public final ArrayList<GameBody> addQueue;
     public final ArrayList<GameBody> removeQueue;
     public final Vector2 gameSize = new Vector2(900, 1600);
     public final Vector2 screenSize;
+    private GameSurfaceView view;
 
     private Session session;
     private int mode;
+    private int status = GAME_STATE_PREP;
 
     private long gameID = 0;
 
     public GameManager(GameSurfaceView view, int mode)
     {
         screenSize  = new Vector2(view.getWidth(), view.getHeight());
+        this.view = view;
         bodies      = new ArrayList<GameBody>();
         addQueue    = new ArrayList<GameBody>();
         removeQueue = new ArrayList<GameBody>();
@@ -185,7 +194,7 @@ public class GameManager {
                 int gameID = data.get("game_id").getAsNumber().intValue();
                 int state = data.get("state").getAsNumber().intValue();
                 String opposingName = data.get("opposing_name").getAsString();
-                Log.d("Game", "Opposiing name: " + opposingName);
+                Log.d("Game", "Opposing name: " + opposingName);
 
 
             } catch(NullPointerException e) {
