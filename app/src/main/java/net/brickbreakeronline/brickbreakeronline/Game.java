@@ -6,8 +6,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import net.brickbreakeronline.brickbreakeronline.framework.GameManager;
+import net.brickbreakeronline.brickbreakeronline.networking.Session;
 
 public class Game extends AppCompatActivity implements View.OnClickListener {
 
@@ -17,7 +21,9 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
 
     private GameSurfaceView game;
 
-    private Button mNewGameButton;
+    private Button goToMenuButton;
+    private boolean keepSessionAlive = false;
+    private Session session;
 
     private View mContentView;
     private View mControlsView;
@@ -33,15 +39,38 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
 
-        mNewGameButton = (Button) findViewById(R.id.switch_screen);
+        goToMenuButton = (Button) findViewById(R.id.go_to_menu);
 
-        mNewGameButton.setOnClickListener(new View.OnClickListener() {
+        goToMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), MainMenu.class);
-                startActivity(intent);
+                goToMenu();
             }
         });
+
+
+        Bundle extras = getIntent().getExtras();
+        if (extras == null) {
+            goToMenu();
+            return;
+        }
+
+        if (extras.getBoolean("isSinglePlayer", false)) {
+            game.setMode(GameManager.MODE_SINGLE_PLAYER);
+            Log.d("Game", "SinglePlayer mode!");
+        } else {
+            session = Session.mainSession;
+            long gameID = extras.getLong("GameID", 0);
+            if (session.isRunning() && session.isConnected() && gameID > 0) {
+                session.resetHandlers();
+                session.resetCallbacks();
+                initiateMultiplayer(gameID);
+            } else {
+                goToMenu();
+            }
+        }
+
+
     }
 
     /*******************************************************************************/
@@ -114,7 +143,9 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
     protected void onPause()
     {
         super.onPause();
+        Log.d("Game", "paused");
         game.pause();
+
     }
 
     @Override
@@ -122,51 +153,65 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
     {
         super.onResume();
         hide();
+        Log.d("Game", "resumed");
         game.resume();
+    }
+
+    private void goToMenu() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(getBaseContext(), MainMenu.class);
+                startActivity(intent);
+                keepSessionAlive = true;
+                finish();
+            }
+        });
     }
 
     protected void onDestroy()
     {
         super.onDestroy();
-        //POSSIBLE SOUND MANAGER?????
+        if (!keepSessionAlive) {
+            session.close();
+        }
+
+        //Do sound manager cleanup
         //SOUNDMANAGER.cleanup();
     }
 
-    /* TO BE LOOKED OVER LATER
     @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        float xPosition1 = 0;
-        float yPosition1 = 0;
-        float xPosition2 = 0;
-        float yPosition2 = 0;
-
-        for (int pointerIndex = 0; pointerIndex < event.getPointerCount(); pointerIndex++)
-        {
-            if (pointerIndex == 0)
-            {
-                xPosition1 = event.getX(pointerIndex);
-                yPosition1 = event.getY(pointerIndex);
-            }
-
-            if (pointerIndex == 1)
-            {
-                xPosition2 = event.getX(pointerIndex);
-                yPosition2 = event.getX(pointerIndex);
-            }
-        }
-
-        switch (event.getAction())
-        {
-            case MotionEvent.ACTION_MOVE:
-                //setPaddlePosition(xPosition1, yPosition1, xPosition2, yPosition2);
-                break;
-        }
-        return true;
+    public void onBackPressed() {
+        super.onBackPressed();
+        goToMenu();
     }
-    */
 
+    private void initiateMultiplayer(long gameID) {
+        initiateHandlers();
+        game.setMode(GameManager.MODE_MULTIPLAYER);
+        game.setSession(session, gameID);
+    }
 
+    private void initiateHandlers() {
+        session.setDisconnectCallback(disconnectCallback);
+        session.setFatalErrorCallback(errorCallback);
+        session.setErrorCallback(errorCallback);
+        //session.setKickCallback(kickCallback);
+    }
 
+    private Session.CallbackListener disconnectCallback = new Session.CallbackListener() {
+        @Override
+        public void call() {
+            Log.d("Game", "Disconnected");
+            goToMenu();
+        }
+    };
+
+    private Session.ExceptionListener errorCallback = new Session.ExceptionListener() {
+        @Override
+        public void call(Exception e) {
+            Log.d("Game", "Error: " + e.getMessage());
+        }
+    };
 
 }

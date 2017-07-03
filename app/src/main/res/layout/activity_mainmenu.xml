@@ -33,7 +33,7 @@
             android:orientation="vertical">
 
             <ImageButton
-                android:id="@+id/switch_screen"
+                android:id="@+id/play_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -41,7 +41,7 @@
                 android:background="@drawable/playbuttonxml" />
 
             <ImageButton
-                android:id="@+id/switch_screen2"
+                android:id="@+id/settings_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"

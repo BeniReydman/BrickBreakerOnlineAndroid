@@ -13,6 +13,7 @@ import android.widget.TextView;
 import net.brickbreakeronline.brickbreakeronline.framework.GameManager;
 import net.brickbreakeronline.brickbreakeronline.framework.Touch;
 import net.brickbreakeronline.brickbreakeronline.framework.Vector2;
+import net.brickbreakeronline.brickbreakeronline.networking.Session;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,6 +43,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private long lastRealUPSUpdate = System.currentTimeMillis();
     private int updatesDone = 0;
     private int framesDone = 0;
+
+    private int mode = 0;
+
+    Session session;
+    private long gameID = 0;
 
     Canvas canvas = null;
     Timer preGameTimer;
@@ -75,26 +81,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     private void createGameManager()
     {
-        gm = new GameManager(this);
+        gm = new GameManager(this, mode);
+        gm.setSession(session, gameID);
         gm.create();
     }
 
-    protected void createGame() {
-
-        g.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                t = GameSurfaceView.super.getRootView().findViewById(R.id.fullscreen_content);
-            }
-        });
-        waitTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                createGameManager();
-                drawGame();
-                readyDraw();
-            }
-        }, 350);
+    protected void createSinglePlayerGame() {
         gameStart.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -109,6 +101,37 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 startLoop();
             }
         }, 3000);
+    }
+
+    protected void createMultiplayerGame() {}
+
+    protected void createGame() {
+        g.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                t = GameSurfaceView.super.getRootView().findViewById(R.id.fullscreen_content);
+            }
+        });
+
+
+        waitTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                createGameManager();
+                drawGame();
+                readyDraw();
+            }
+        }, 350);
+
+        switch (mode) {
+            case GameManager.MODE_SINGLE_PLAYER:
+                createSinglePlayerGame();
+                break;
+            case GameManager.MODE_MULTIPLAYER:
+                createMultiplayerGame();
+                break;
+        }
+
     }
 
 
@@ -241,4 +264,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public void surfaceDestroyed(SurfaceHolder holder) {
     }
 
+    public void setSession(Session s, long gameID) {
+        if (mode != GameManager.MODE_MULTIPLAYER) {
+            return;
+        }
+
+        session = s;
+        this.gameID = gameID;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
 }

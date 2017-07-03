@@ -1,9 +1,14 @@
 package net.brickbreakeronline.brickbreakeronline.framework;
 
 import android.graphics.Canvas;
+import android.util.Log;
+
+import com.google.gson.JsonObject;
 
 import net.brickbreakeronline.brickbreakeronline.CreateWorld;
 import net.brickbreakeronline.brickbreakeronline.GameSurfaceView;
+import net.brickbreakeronline.brickbreakeronline.R;
+import net.brickbreakeronline.brickbreakeronline.networking.Session;
 
 import java.util.ArrayList;
 
@@ -13,6 +18,9 @@ import java.util.ArrayList;
 
 public class GameManager {
 
+    public static final int MODE_SINGLE_PLAYER = 0;
+    public static final int MODE_MULTIPLAYER = 1;
+
     final String id = "";
     public final ArrayList<GameBody> bodies;
     public final ArrayList<GameBody> addQueue;
@@ -20,12 +28,18 @@ public class GameManager {
     public final Vector2 gameSize = new Vector2(900, 1600);
     public final Vector2 screenSize;
 
-    public GameManager(GameSurfaceView view)
+    private Session session;
+    private int mode;
+
+    private long gameID = 0;
+
+    public GameManager(GameSurfaceView view, int mode)
     {
         screenSize  = new Vector2(view.getWidth(), view.getHeight());
         bodies      = new ArrayList<GameBody>();
         addQueue    = new ArrayList<GameBody>();
         removeQueue = new ArrayList<GameBody>();
+        this.mode = mode;
     }
 
     public GameBody getGameBodyByID(int id)
@@ -47,7 +61,11 @@ public class GameManager {
 
     public void create()
     {
-        CreateWorld.createSinglePlayer(this);
+        if (this.mode == MODE_SINGLE_PLAYER) {
+            CreateWorld.createSinglePlayer(this);
+        } else if (this.mode == MODE_MULTIPLAYER && session != null) {
+            doJoinGame();
+        }
     }
 
     public int getGameWidth()
@@ -140,4 +158,49 @@ public class GameManager {
         );
     }
 
+
+    private void doJoinGame() {
+
+        JsonObject obj = new JsonObject();
+        obj.addProperty("game_id", gameID);
+
+        session.request("GameService.JoinGame", obj, onJoinGame);
+    }
+
+    private Session.MessageListener onJoinGame = new Session.MessageListener() {
+        @Override
+        public void call(JsonObject obj) {
+            Log.d("Matchmaking", "Join Game: " + obj.toString());
+
+            try {
+
+                int code = obj.get("code").getAsNumber().intValue();
+                if (code != 200) {
+                    // TODO: return to matchmaking
+                    Log.d("Game", "Error joining game. Code: " + obj.toString());
+                    return;
+                }
+
+                JsonObject data = obj.get("data").getAsJsonObject();
+                int gameID = data.get("game_id").getAsNumber().intValue();
+                int state = data.get("state").getAsNumber().intValue();
+                String opposingName = data.get("opposing_name").getAsString();
+                Log.d("Game", "Opposiing name: " + opposingName);
+
+
+            } catch(NullPointerException e) {
+                Log.d("Game", "Error joining game. Null: " + obj.toString());
+                // TODO: return to matchmaking
+            }
+        }
+    };
+
+    public void setSession(Session s, long gameID) {
+        if (mode != GameManager.MODE_MULTIPLAYER) {
+            return;
+        }
+
+        session = s;
+        this.gameID = gameID;
+    }
 }

@@ -49,7 +49,7 @@ public class Matchmaking extends AppCompatActivity {
         session.setHeartbeatCallback(new Session.CallbackListener() {
             @Override
             public void call() {
-                //Log.d("heartbeat", "www");
+                Log.d("heartbeat", "www");
             }
         });
 
@@ -64,6 +64,7 @@ public class Matchmaking extends AppCompatActivity {
 
 
         session.on("SearchStateMessage", onSearchState);
+        session.on("PrepGame", onGamePrep);
 
 
         session.request("Matchmaker.StartSearching", onSearchState);
@@ -76,6 +77,7 @@ public class Matchmaking extends AppCompatActivity {
         session.notify("Matchmaker.StopSearching");
         setStatusText(R.string.not_searching);
         if (!keepSessionAlive) {
+            Log.d("Matchmaking", "Keeping session alive.");
             session.close();
         }
     }
@@ -152,5 +154,36 @@ public class Matchmaking extends AppCompatActivity {
             }
         }
     };
+
+    private Session.MessageListener onGamePrep = new Session.MessageListener() {
+        @Override
+        public void call(JsonObject obj) {
+            try {
+
+                Log.d("Matchmaking", "PREP: " + obj.toString());
+
+                long gameID = obj.get("game_id").getAsLong();
+
+                if (gameID > 0) {
+                    setStatusText(R.string.game_found);
+
+                    Intent intent = new Intent(getBaseContext(), Game.class);
+                    intent.putExtra("GameID", gameID);
+                    Log.d("Matchmaking", "Starting game...");
+                    keepSessionAlive = true;
+                    startActivity(intent);
+                    finish();
+
+                }
+
+            } catch(NullPointerException e) {
+                Log.d("Matchmaking", "Error prepping game: " + obj.toString());
+                setStatusText(R.string.matchmaking_error);
+                goToMenu();
+            }
+        }
+    };
+
+
 
 }

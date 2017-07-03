@@ -171,6 +171,10 @@ public class Session implements Runnable {
     }
 
     public boolean isClosed() {
+        return !this.running;
+    }
+
+    public boolean isRunning() {
         return this.running;
     }
 
@@ -239,12 +243,11 @@ public class Session implements Runnable {
             }
         }
 
-
         try {
             s.close();
             in.close();
             out.close();
-        } catch (IOException ignored) {}
+        } catch (IOException|NullPointerException ignored) {}
     }
 
 

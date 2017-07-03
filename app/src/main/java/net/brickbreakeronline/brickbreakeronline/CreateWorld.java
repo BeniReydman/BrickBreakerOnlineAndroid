@@ -77,7 +77,7 @@ public class CreateWorld {
 
     }
 
-    public static void createMultiplayerGame(GameManager gm, String worldInfo)
+    public static void createMultiplayer(GameManager gm)
     {
 
 

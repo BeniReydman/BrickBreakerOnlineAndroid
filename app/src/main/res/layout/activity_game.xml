@@ -27,7 +27,7 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/switch_screen"
+        android:id="@+id/go_to_menu"
         style="?metaButtonBarButtonStyle"
         android:layout_width="50dp"
         android:layout_height="30dp"

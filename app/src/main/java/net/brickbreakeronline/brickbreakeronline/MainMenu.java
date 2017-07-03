@@ -25,6 +25,7 @@ public class MainMenu extends AppCompatActivity {
     boolean keepSessionAlive = false;
 
     private ImageButton mNewGameButton;
+    private ImageButton mSettingsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,7 @@ public class MainMenu extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_mainmenu);
 
-        mNewGameButton = (ImageButton) findViewById(R.id.switch_screen);
+        mNewGameButton = (ImageButton) findViewById(R.id.play_button);
         mNewGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,6 +45,19 @@ public class MainMenu extends AppCompatActivity {
             } else if (!session.isConnected()) {
                 startConnection();
             }
+            }
+        });
+
+        mSettingsButton = (ImageButton) findViewById(R.id.settings_button);
+        mSettingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getBaseContext(), Game.class);
+                intent.putExtra("isSinglePlayer", true);
+                startActivity(intent);
+                keepSessionAlive = false;
+                finish();
             }
         });
     }
@@ -70,7 +84,15 @@ public class MainMenu extends AppCompatActivity {
             session = Session.mainSession;
             resetHandlers();
             checkAuthenticated();
+            Log.d("MainMenuDebug", "AUTH CHECK");
+        } else if (Session.mainSession != null && !Session.mainSession.isClosed()) {
+            session = Session.mainSession;
+            resetHandlers();
+            session.connect();
+            Log.d("MainMenuDebug", "NOT NULL");
+
         } else {
+            Log.d("MainMenuDebug", "NEW SESSION");
             session = new Session(host, port);
             Session.mainSession = session;
             resetHandlers();
@@ -80,17 +102,13 @@ public class MainMenu extends AppCompatActivity {
     }
 
     private void resetHandlers() {
-        if (session == null) {
-            startConnection();
-        } else {
-            session.resetHandlers();
-            session.resetCallbacks();
-            session.setConnectFailedCallback(connectFailedCallback);
-            session.setHandshakeCallback(handshakeCallback);
-            session.setFatalErrorCallback(fatalErrorCallback);
-            session.setFatalErrorCallback(errorCallback);
-            session.setDisconnectCallback(disconnectCallback);
-        }
+        session.resetHandlers();
+        session.resetCallbacks();
+        session.setConnectFailedCallback(connectFailedCallback);
+        session.setHandshakeCallback(handshakeCallback);
+        session.setFatalErrorCallback(fatalErrorCallback);
+        session.setFatalErrorCallback(errorCallback);
+        session.setDisconnectCallback(disconnectCallback);
     }
 
     private void checkAuthenticated() {
