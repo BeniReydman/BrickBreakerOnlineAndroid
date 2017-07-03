@@ -1,10 +1,14 @@
 package net.brickbreakeronline.brickbreakeronline.networking;
 
+import android.util.Log;
+import android.util.SparseArray;
+
 import com.google.gson.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.util.*;
 
@@ -16,6 +20,7 @@ import java.util.*;
  */
 public class Session implements Runnable {
 
+    public static Session mainSession;
 
     public static final int RES_OK = 200;
     public static final int RES_FAIL = 500;
@@ -60,7 +65,7 @@ public class Session implements Runnable {
 
     private boolean connected = false;
     private boolean doConnect = false;
-    private boolean running = true;
+    private boolean running = false;
 
     private long connectAt = 0;
     private int connectAttempts = 0;
@@ -75,7 +80,7 @@ public class Session implements Runnable {
     private Gson gson;
 
     private Map<String, MessageListener> routeCallbacks;
-    private Map<Integer, MessageListener> requestCallbacks;
+    private SparseArray<MessageListener> requestCallbacks;
     private int lastMessageID = 1;
     private ArrayList<byte[]> outBuffer;
 
@@ -87,26 +92,29 @@ public class Session implements Runnable {
         heartbeatTimer = new Timer();
         heartbeatTimeoutTimer = new Timer();
         routeCallbacks = new HashMap<String, MessageListener>();
-        requestCallbacks = new HashMap<Integer, MessageListener>();
+        requestCallbacks = new SparseArray<MessageListener>();
         outBuffer = new ArrayList<byte[]>();
 
-        fatalErrorCallback = new ExceptionListener() {
-            @Override
-            public void call(Exception e) {
-                e.printStackTrace();
-            }
-        };
-
-        errorCallback = new ExceptionListener() {
-            @Override
-            public void call(Exception e) {
-                e.printStackTrace();
-            }
-        };
+        resetCallbacks();
+        resetHandlers();
     }
 
     public void start() {
-        thread.start();
+        if (!running) {
+            running = true;
+            thread.start();
+        }
+    }
+
+    public boolean reconnect() {
+        if (!running || connected) {
+            return false;
+        } else if (connectAttempts < MAX_CONNECT_ATTEMPTS) {
+            connectAt = System.currentTimeMillis() + RECONNECT_INTERVAL;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void connect() {
@@ -157,9 +165,13 @@ public class Session implements Runnable {
     }
 
     public void close() {
-        resetConnection();
         this.running = false;
+        resetConnection();
         onClose();
+    }
+
+    public boolean isClosed() {
+        return this.running;
     }
 
     private void doWrite() throws IOException {
@@ -219,12 +231,11 @@ public class Session implements Runnable {
                     doWrite();
                     doRead();
                 }
+                Thread.sleep(5);
 
-            } catch (IOException e) {
+            } catch (IOException|InterruptedException e) {
                 onFatalError(e);
                 close();
-            } finally {
-                Thread.yield();
             }
         }
 
@@ -366,6 +377,7 @@ public class Session implements Runnable {
                 l.call(msg.getObject());
                 requestCallbacks.remove(msg.getId());
             } else {
+                Log.d("id", String.valueOf(msg.getId()));
                 onError(new InvalidMessageException());
             }
         }
@@ -528,6 +540,33 @@ public class Session implements Runnable {
 
     public void setErrorCallback(ExceptionListener errorCallback) {
         this.errorCallback = errorCallback;
+    }
+
+    public void resetHandlers() {
+        routeCallbacks = new HashMap<String, MessageListener>();
+        requestCallbacks = new SparseArray<MessageListener>();
+    }
+
+    public void resetCallbacks() {
+        handshakeCallback = null;
+        heartbeatCallback = null;
+        closeCallback = null;
+        disconnectCallback = null;
+        kickCallback = null;
+        connectCallback = null;
+        connectFailedCallback = null;
+        fatalErrorCallback = new ExceptionListener() {
+            @Override
+            public void call(Exception e) {
+                e.printStackTrace();
+            }
+        };
+        errorCallback = new ExceptionListener() {
+            @Override
+            public void call(Exception e) {
+                e.printStackTrace();
+            }
+        };
     }
 
     public boolean on(String route, MessageListener l) {
@@ -850,5 +889,4 @@ public class Session implements Runnable {
             super(message);
         }
     }
-
 }

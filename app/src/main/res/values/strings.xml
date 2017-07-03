@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">BrickBreaker Online</string>
 
+    <string name="starting_searching">Initializing Search</string>
+    <string name="searching">Searching for game…</string>
+    <string name="game_found">Game found! Joining…</string>
+    <string name="matchmaking_error">Error finding game.</string>
+    <string name="not_searching">Not searching.</string>
+
+
     <string name="dummy_button">Cool Button</string>
     <string name="dummy_content">I\'M SO COOL :)</string>
     <string name="title_activity_game">Game</string>
