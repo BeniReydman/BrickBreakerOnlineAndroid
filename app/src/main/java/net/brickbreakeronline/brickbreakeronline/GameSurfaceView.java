@@ -89,12 +89,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
      * Starts the game at a specific time alerting the user of when the game will start.
      * @param time
      */
-    protected void startGameAt(long time) {
+    public void startGameAt(long time) {
         int delay = (int) (time - System.currentTimeMillis());
         resetReadyText(delay/3);
     }
 
-    protected void startGame() {
+    public void startGame() {
         lastUpdate = System.currentTimeMillis();
         lastNetworkUpdate = System.currentTimeMillis();
         startLoop();
@@ -139,7 +139,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     }
 
 
-    private void drawGame()
+    public void drawGame()
     {
         if (holder.getSurface().isValid()) {
             canvas = holder.lockCanvas(null);
@@ -156,6 +156,17 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         }
     }
 
+
+    public void goToMenu() {
+        Game game = (Game)this.getContext();
+        game.goToMenu();
+    }
+
+
+    public void goToMatchmaking() {
+        Game game = (Game)this.getContext();
+        game.goToMatchmaking();
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -199,7 +210,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public void resetReadyText(int interval) { resetReadyText(interval, 0); }
     public void resetReadyText(final int interval, final int step)
     {
-
         switch (step) {
             case 0:
                 setReadyText("Get Ready!");

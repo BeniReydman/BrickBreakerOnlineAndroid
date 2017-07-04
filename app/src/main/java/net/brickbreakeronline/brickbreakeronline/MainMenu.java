@@ -80,19 +80,20 @@ public class MainMenu extends AppCompatActivity {
 
     private void startConnection() {
 
-        if (Session.mainSession != null && Session.mainSession.isConnected()) {
-            session = Session.mainSession;
+        if (Session.mainSession != null &&
+                Session.mainSession.isRunning() && Session.mainSession.isConnected()) {
+            session = Session.mainSession; // session is connected and running
             resetHandlers();
             checkAuthenticated();
             Log.d("MainMenuDebug", "AUTH CHECK");
-        } else if (Session.mainSession != null && !Session.mainSession.isClosed()) {
-            session = Session.mainSession;
+        } else if (Session.mainSession != null && Session.mainSession.isRunning()) {
+            session = Session.mainSession; // session is not connected but still running.
             resetHandlers();
             session.connect();
             Log.d("MainMenuDebug", "NOT NULL");
 
         } else {
-            Log.d("MainMenuDebug", "NEW SESSION");
+            Log.d("MainMenuDebug", "NEW SESSION"); // session is not connected and not running.
             session = new Session(host, port);
             Session.mainSession = session;
             resetHandlers();
@@ -258,7 +259,6 @@ public class MainMenu extends AppCompatActivity {
         @Override
         public void call(JsonObject obj) {
             try {
-
                 int code = obj.get("code").getAsNumber().intValue();
                 if (code != 200) {
                     Log.d("Retrieval Error", "");

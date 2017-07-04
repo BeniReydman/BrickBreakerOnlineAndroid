@@ -215,6 +215,7 @@ public class Session implements Runnable {
         while (running) {
             try {
                 if (!connected && (doConnect || (connectAt > 0 && connectAt < System.currentTimeMillis()))) {
+                    Log.d("Session", "Connecting...");
                     connectAt = 0;
                     doConnect = false;
                     connected = this.executeConnect();
@@ -380,8 +381,7 @@ public class Session implements Runnable {
                 l.call(msg.getObject());
                 requestCallbacks.remove(msg.getId());
             } else {
-                Log.d("id", String.valueOf(msg.getId()));
-                onError(new InvalidMessageException());
+                onError(new InvalidMessageException(msg.getId()));
             }
         }
 
@@ -389,9 +389,8 @@ public class Session implements Runnable {
             MessageListener l = routeCallbacks.get(msg.getRoute());
             if (l != null) {
                 l.call(msg.getObject());
-                routeCallbacks.remove(msg.getRoute());
             } else {
-                onError(new InvalidMessageException());
+                onError(new InvalidMessageException(msg.getRoute()));
             }
         }
     }
@@ -880,7 +879,19 @@ public class Session implements Runnable {
     }
 
     public class ServerTimeoutException extends Exception {}
-    public class InvalidMessageException extends Exception {}
+    public class InvalidMessageException extends Exception {
+        public InvalidMessageException() {
+            super("Route or ID is not valid.");
+        }
+
+        public InvalidMessageException(int id) {
+            super("Route with ID " + id + " is not valid.");
+        }
+
+        public InvalidMessageException(String route) {
+            super("Route with name " + route + " is not valid.");
+        }
+    }
     public class RouteLengthTooLong extends Exception {}
 
     public class HandshakeException extends Exception {

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 
+import net.brickbreakeronline.brickbreakeronline.networking.Account;
 import net.brickbreakeronline.brickbreakeronline.networking.Session;
 
 
@@ -66,8 +67,7 @@ public class Matchmaking extends AppCompatActivity {
         session.on("SearchStateMessage", onSearchState);
         session.on("PrepGame", onGamePrep);
 
-
-        session.request("Matchmaker.StartSearching", onSearchState);
+        session.request("Manager.IsAuthenticated", onIsAuthenticated);
         setStatusText(R.string.starting_searching);
     }
 
@@ -180,6 +180,26 @@ public class Matchmaking extends AppCompatActivity {
                 Log.d("Matchmaking", "Error prepping game: " + obj.toString());
                 setStatusText(R.string.matchmaking_error);
                 goToMenu();
+            }
+        }
+    };
+
+    private Session.MessageListener onIsAuthenticated = new Session.MessageListener() {
+        @Override
+        public void call(JsonObject obj) {
+
+            try {
+                int code = obj.get("code").getAsNumber().intValue();
+                boolean authenticated = obj.get("data").getAsJsonObject()
+                        .get("authenticated").getAsBoolean();
+                if (code == 200 && authenticated) {
+                    session.request("Matchmaker.StartSearching", onSearchState);
+                } else if (!authenticated) {
+                    goToMenu();
+                }
+
+            } catch(NullPointerException e) {
+                Log.d("Matchmaking", e.toString());
             }
         }
     };

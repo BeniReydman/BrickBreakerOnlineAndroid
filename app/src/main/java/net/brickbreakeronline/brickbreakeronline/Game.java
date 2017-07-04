@@ -155,7 +155,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
         game.resume();
     }
 
-    private void goToMenu() {
+    public void goToMenu() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -167,9 +167,24 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
         });
     }
 
+    public void goToMatchmaking() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(getBaseContext(), Matchmaking.class);
+                startActivity(intent);
+                keepSessionAlive = true;
+                finish();
+            }
+        });
+    }
+
     protected void onDestroy()
     {
         super.onDestroy();
+        if (session != null) {
+            session.notify("GameService.Leave");
+        }
         if (!keepSessionAlive) {
             session.close();
         }
@@ -208,7 +223,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
     private Session.ExceptionListener errorCallback = new Session.ExceptionListener() {
         @Override
         public void call(Exception e) {
-            Log.d("Game", "Error: " + e.getMessage());
+            Log.d("Game", "Error: " + e.toString());
         }
     };
 

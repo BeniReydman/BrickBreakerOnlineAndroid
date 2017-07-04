@@ -16,8 +16,6 @@ public class CreateWorld {
     public static void createSinglePlayer(GameManager gm)
     {
         int id = 1;
-        BrickHolder holder = new BrickHolder(gm, id++);
-        gm.bodies.add( holder );
 
         int numOfBricksX = 6;
         int numOfBricksY = 9;
@@ -41,7 +39,7 @@ public class CreateWorld {
                     switchPattern = !switchPattern;
                     switchHit = false;
                 }
-                holder.addBrick(new Brick(gm, id++, size.clone(), pos.clone()));
+                gm.addBody(new Brick(gm, id++, size.clone(), pos.clone()));
                 pos = pos.add(new Vector2(size.getX() + spacingX, 0));
             }
             pos = pos.add(new Vector2(0, size.getY() + spacingY));
@@ -52,7 +50,6 @@ public class CreateWorld {
                 switchHit = !switchHit;
             }
         }
-        holder.resize();
 
         Ball ball = new Ball(gm, id++);
         ball.setPosition(new Vector2(450, 200));
@@ -74,12 +71,6 @@ public class CreateWorld {
                 new Vector2(450-paddleSize.getX()/2, 60),
                 paddleSize.clone());
         gm.bodies.add( paddle2 );
-
-    }
-
-    public static void createMultiplayer(GameManager gm)
-    {
-
 
     }
 }

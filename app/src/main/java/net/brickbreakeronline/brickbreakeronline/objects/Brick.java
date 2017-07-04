@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import com.google.gson.JsonObject;
+
 import net.brickbreakeronline.brickbreakeronline.Effects.Explosion;
 import net.brickbreakeronline.brickbreakeronline.framework.GameBody;
 import net.brickbreakeronline.brickbreakeronline.framework.GameManager;
@@ -27,6 +29,24 @@ public class Brick extends GameBody {
 
     int[] colorSpectrum = {Color.RED, Color.YELLOW, Color.WHITE};
     int color = colorSpectrum[colorSpectrum.length-1];
+
+    public Brick(GameManager gameManager, int identification, JsonObject obj) throws NullPointerException {
+        super(gameManager, identification);
+
+        JsonObject box = obj.get("box").getAsJsonObject();
+        JsonObject pos = box.get("pos").getAsJsonObject();
+        double x = pos.get("x").getAsDouble();
+        double y = pos.get("y").getAsDouble();
+        double width = box.get("w").getAsDouble();
+        double height = box.get("h").getAsDouble();
+
+        setShapeWithoutPosition(new ShapeRect(new Vector2(x,y), new Vector2(width, height)));
+        paint = new Paint();
+        paintDark = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paintDark.setStyle(Paint.Style.FILL);
+        sizeDecreaser = (float) (gm.gameToScreenCoords(getSize()).getYf() * 0.1);
+    }
 
     public Brick(GameManager gameManager, int identification, Vector2 size, Vector2 pos) {
         super(gameManager, identification);
